@@ -63,10 +63,11 @@ description = "sync tab names"
 ## Instant updates on cd (optional)
 
 For labels that update the moment you `cd`, source the bundled shell hook
-inside herdr panes. It renames the pane's tab directly on every directory
-change (bypassing the manual-rename protection for that tab, since your `cd`
-is the intent). Find the plugin root with `herdr plugin list`, then add to
-your shell rc:
+inside herdr panes. On every directory change it runs the plugin's `sync`
+action in the background, so a `cd` follows the same rules as every other
+event: tabs you renamed manually keep their name unless `overwrite_manual` is
+set. A `cd` inside a subshell (`(cd dir && make)`) does not trigger it. Find
+the plugin root with `herdr plugin list`, then add to your shell rc:
 
 ```zsh
 # ~/.zshrc
