@@ -117,9 +117,10 @@ function cwdForTab(tabId: string, panes: PaneInfo[]): string | null {
   return pane.foreground_cwd || pane.cwd || null;
 }
 
-// With --force-current (the `sync-current` action), the tab the action was
-// invoked from is relabeled even if it was renamed manually, and the plugin
-// takes ownership of it again.
+// With --force-current (the `sync-current` action), the focused tab (herdr's
+// plugin context tab, which is the focused one even for CLI invocations) is
+// relabeled even if it was renamed manually, and the plugin takes ownership
+// of it again.
 function forcedTabId(): string | null {
   if (!process.argv.includes("--force-current")) {
     return null;

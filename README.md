@@ -60,10 +60,20 @@ command = "dev-shimada.auto-tab-name.sync"
 description = "sync tab names"
 ```
 
-`sync` never touches a tab you renamed manually. To put the current tab back
-under automatic naming, run `sync-current`: it relabels the tab you invoke it
-from to its directory name even if you renamed it, and the plugin owns the
-label again from then on.
+`sync` never touches a tab you renamed manually. To put a tab back under
+automatic naming, run `sync-current`: it relabels the **focused** tab to its
+directory name even if you renamed it, and the plugin owns the label again
+from then on. herdr passes the focused tab as the plugin context, so invoking
+it from a pane in a tab that isn't focused acts on the focused tab instead.
+Binding it to a key avoids the ambiguity:
+
+```toml
+[[keys.command]]
+key = "prefix+shift+n"
+type = "plugin_action"
+command = "dev-shimada.auto-tab-name.sync-current"
+description = "rename tab to its directory"
+```
 
 ```bash
 herdr plugin action invoke dev-shimada.auto-tab-name.sync-current

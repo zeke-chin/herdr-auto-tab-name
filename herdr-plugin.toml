@@ -12,7 +12,7 @@ command = ["node", "sync.mts"]
 
 [[actions]]
 id = "sync-current"
-title = "Sync current tab name, overriding a manual rename"
+title = "Sync the focused tab name, overriding a manual rename"
 command = ["node", "sync.mts", "--force-current"]
 
 [[events]]
