@@ -10,6 +10,11 @@ id = "sync"
 title = "Sync tab names now"
 command = ["node", "sync.mts"]
 
+[[actions]]
+id = "sync-current"
+title = "Sync current tab name, overriding a manual rename"
+command = ["node", "sync.mts", "--force-current"]
+
 [[events]]
 on = "tab.created"
 command = ["node", "sync.mts"]

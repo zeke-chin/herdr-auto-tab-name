@@ -56,3 +56,31 @@ const state = JSON.parse(fs.readFileSync(path.join(stateDir, "labels.json"), "ut
 assert.deepEqual(state, { t1: "alpha", t3: "gamma" });
 
 console.log("smoke test OK");
+
+// --force-current relabels the invoking tab even though its label is manual,
+// and takes ownership of it. Other tabs follow the normal rules.
+fs.writeFileSync(renameLog, "");
+const forced = spawnSync(process.execPath, [path.join(root, "sync.mts"), "--force-current"], {
+  encoding: "utf8",
+  env: {
+    ...process.env,
+    HERDR_BIN_PATH: path.join(root, "tests", "stub", "herdr.mjs"),
+    HERDR_PLUGIN_STATE_DIR: stateDir,
+    HERDR_PLUGIN_CONFIG_DIR: configDir,
+    HERDR_PLUGIN_CONTEXT_JSON: JSON.stringify({ tab_id: "t2" }),
+    STUB_RENAME_LOG: renameLog,
+  },
+});
+assert.equal(forced.status, 0, `sync.mts --force-current failed\nstderr:\n${forced.stderr}`);
+const forcedRenames = fs
+  .readFileSync(renameLog, "utf8")
+  .split("\n")
+  .filter((line) => line !== "")
+  .sort();
+// The stub's labels are static, so t3 ("oldname") is no longer owned after the
+// first run recorded "gamma"; t1 is still a default number.
+assert.deepEqual(forcedRenames, ["t1 alpha", "t2 beta"]);
+const forcedState = JSON.parse(fs.readFileSync(path.join(stateDir, "labels.json"), "utf8"));
+assert.deepEqual(forcedState, { t1: "alpha", t2: "beta" });
+
+console.log("force-current smoke test OK");

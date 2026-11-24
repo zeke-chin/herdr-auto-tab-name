@@ -117,8 +117,32 @@ function cwdForTab(tabId: string, panes: PaneInfo[]): string | null {
   return pane.foreground_cwd || pane.cwd || null;
 }
 
+// With --force-current (the `sync-current` action), the tab the action was
+// invoked from is relabeled even if it was renamed manually, and the plugin
+// takes ownership of it again.
+function forcedTabId(): string | null {
+  if (!process.argv.includes("--force-current")) {
+    return null;
+  }
+  const context = readContext();
+  const tabId = context.tab_id ?? process.env.HERDR_TAB_ID;
+  if (!tabId) {
+    throw new Error("--force-current: no current tab in plugin context");
+  }
+  return tabId;
+}
+
+function readContext(): { tab_id?: string } {
+  try {
+    return JSON.parse(process.env.HERDR_PLUGIN_CONTEXT_JSON || "{}");
+  } catch {
+    return {};
+  }
+}
+
 function main(): void {
   const config = loadConfig();
+  const forced = forcedTabId();
   const stateDir = process.env.HERDR_PLUGIN_STATE_DIR;
   const stateFile = stateDir ? path.join(stateDir, "labels.json") : null;
   // A tab whose current label differs from this record was renamed by the
@@ -140,7 +164,9 @@ function main(): void {
 
     for (const tab of tabs) {
       const owned =
-        DEFAULT_LABEL.test(tab.label) || ownedLabels[tab.tab_id] === tab.label;
+        DEFAULT_LABEL.test(tab.label) ||
+        ownedLabels[tab.tab_id] === tab.label ||
+        tab.tab_id === forced;
       if (!owned && !config.overwriteManual) {
         continue;
       }

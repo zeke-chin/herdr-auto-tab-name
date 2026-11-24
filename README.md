@@ -60,6 +60,15 @@ command = "dev-shimada.auto-tab-name.sync"
 description = "sync tab names"
 ```
 
+`sync` never touches a tab you renamed manually. To put the current tab back
+under automatic naming, run `sync-current`: it relabels the tab you invoke it
+from to its directory name even if you renamed it, and the plugin owns the
+label again from then on.
+
+```bash
+herdr plugin action invoke dev-shimada.auto-tab-name.sync-current
+```
+
 ## Instant updates on cd (optional)
 
 For labels that update the moment you `cd`, source the bundled shell hook
