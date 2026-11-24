@@ -69,7 +69,7 @@ Binding it to a key avoids the ambiguity:
 
 ```toml
 [[keys.command]]
-key = "prefix+shift+n"
+key = "prefix+shift+a"
 type = "plugin_action"
 command = "dev-shimada.auto-tab-name.sync-current"
 description = "rename tab to its directory"
